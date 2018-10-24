@@ -1,2 +1,6 @@
 *.class
 *.log
+
+*.xml
+*.iml
+*.properties
