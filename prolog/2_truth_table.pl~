@@ -20,7 +20,7 @@ xor(A,B) :- not(or(A,B)).
 % true fail true
 % fail true fail
 % fail fail fail
-evaluate(Expr, true) :- Expr, !.
+evaluate(Expression, true) :- Expression, !.
 evaluate(_, fail).
 
 print(X,Y,Res) :-
