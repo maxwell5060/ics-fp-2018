@@ -9,6 +9,6 @@ q_sort([Head|Tail], Sorted):-
 
 partion(Head, [], [], []).
 partion(Head, [E|Tail], [E|Less], More):-
-    E=<Head, partion(Head, Tail, Less, More).
+    E=<Head, pivot(Head, Tail, Less, More).
 partion(Head, [E|Tail], Less, [E|More]):-
-    E>Head, partion(Head, Tail, Less, More).
+    E>Head, pivot(Head, Tail, Less, More).
