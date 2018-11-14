@@ -11,7 +11,52 @@
 	father(b,e).  % 4
 	father(c,f).  % 5
 % указать в каком порядке и какие ответы генерируются вашими методами
-	?- brother(X,Y).
-	?- cousin(X,Y).
-	?- grandson(X,Y).
-	?- descendent(X,Y).
+	
+	brother(X,Y):- father(A,X), father(A,Y), X \= Y.
+	cousin(X,Y):- brother(A,B), father(A,X), father(B,Y).
+	grandson(X,Y):- father(Y,A), father(A,X).
+	descendent(X,Y):- father(Y,X).
+	descendent(X,Y):- father(Y,A), descendent(X,A).
+
+	:- writeln('Brothers are:\n').
+	:- forall(brother(X,Y), writef('[%t - %t]\n', [X, Y])).
+
+	:- writeln('\nCousins are:\n').
+	:- forall(cousin(X,Y), writef('[%t - %t]\n', [X, Y])).
+
+	:- writeln('\nGrandsons are:\n').
+	:- forall(grandson(X,Y), writef('[%t - %t]\n', [X, Y])).
+
+	:- writeln('\nDescendents are:\n').
+	:- forall(descendent(X,Y), writef('[%t - %t]\n', [X, Y])).
+	
+%Brothers are:
+%
+%[b - c]
+%[c - b]
+%[d - e]
+%[e - d]
+%
+%Cousins are:
+%
+%[d - f]
+%[e - f]
+%[f - d]
+%[f - e]
+%
+%Grandsons are:
+%
+%[d - a]
+%[e - a]
+%[f - a]
+%
+%Descendents are:
+%
+%[b - a]
+%[c - a]
+%[d - b]
+%[e - b]
+%[f - c]
+%[d - a]
+%[e - a]
+%[f - a]
