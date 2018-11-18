@@ -66,11 +66,11 @@ func DefineCommandLineConfig() {
 	flag.BoolP("parallel", "p", false, "use parallel computations")
 	viper.BindPFlag("Algorithm.Parallel", flag.Lookup("parallel"))
 
-	flag.Float32P("offset.x", "x", 2.5,
+	flag.Float32P("offset.x", "x", -0.637243,
 		"offset horizontal center point of M on image with")
 	viper.BindPFlag("Image.Offset.X", flag.Lookup("offset.x"))
 
-	flag.Float32P("offset.y", "y", 1.0,
+	flag.Float32P("offset.y", "y", -0.039745,
 		"offset vertical center point of M on image with")
 	viper.BindPFlag("Image.Offset.Y", flag.Lookup("offset.y"))
 
