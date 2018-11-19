@@ -6,7 +6,6 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",
   "-optimise",
-  "-Yinline-warnings"
 )
 
 fork := true
@@ -14,3 +13,6 @@ fork := true
 javaOptions += "-Xmx2G"
 
 parallelExecution in Test := false
+
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
