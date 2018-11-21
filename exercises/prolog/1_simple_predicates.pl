@@ -15,3 +15,58 @@
 	?- cousin(X,Y).
 	?- grandson(X,Y).
 	?- descendent(X,Y).
+	
+brother(PERSON1,PERSON2) :- father(FATHER,PERSON1), father(FATHER,PERSON2), PERSON1 \= PERSON2.
+cousin(PERSON1,PERSON2) :- father(FATHER1,PERSON1), father(FATHER2,PERSON2), brother(FATHER1,FATHER2), PERSON1 \= PERSON2.
+grandson(PERSON1,PERSON2) :- father(FATHER1,PERSON1), father(PERSON2,FATHER1), PERSON1 \= PERSON2.
+descendent(PERSON1,PERSON2) :- father(PERSON2,PERSON1), PERSON1 \= PERSON2.
+descendent(PERSON1,PERSON2) :- father(PERSON2,CHILD2), descendent(PERSON1,CHILD2), PERSON1 \= PERSON2.
+
+?- brother(PERSON1,PERSON2).
+PERSON1 = b,
+PERSON2 = c ;
+PERSON1 = c,
+PERSON2 = b ;
+PERSON1 = d,
+PERSON2 = e ;
+PERSON1 = e,
+PERSON2 = d ;
+false.
+
+?- cousin(PERSON1,PERSON2).
+PERSON1 = d,
+PERSON2 = f ;
+PERSON1 = e,
+PERSON2 = f ;
+PERSON1 = f,
+PERSON2 = d ;
+PERSON1 = f,
+PERSON2 = e ;
+false.
+
+?- grandson(PERSON1,PERSON2).
+PERSON1 = d,
+PERSON2 = a ;
+PERSON1 = e,
+PERSON2 = a ;
+PERSON1 = f,
+PERSON2 = a.
+
+?- descendent(PERSON1,PERSON2).
+PERSON1 = b,
+PERSON2 = a ;
+PERSON1 = c,
+PERSON2 = a ;
+PERSON1 = d,
+PERSON2 = b ;
+PERSON1 = e,
+PERSON2 = b ;
+PERSON1 = f,
+PERSON2 = c ;
+PERSON1 = d,
+PERSON2 = a ;
+PERSON1 = e,
+PERSON2 = a ;
+PERSON1 = f,
+PERSON2 = a ;
+false.
