@@ -11,7 +11,7 @@
 	father(b,e).  % 4
 	father(c,f).  % 5
 	
-brother(X,Y) :- father(Z,X), father(Z,Y).
+brother(X,Y) :- father(Z,X), father(Z,Y), X \== Y.
 cousin(X,Y) :- father(A,X),father(B,Y),brother(A,B).
 grandson(X,Y) :- father(A,X),father(Y,A).
 descendent(X,Y) :- father(Z,X),descendent(Z,Y).
