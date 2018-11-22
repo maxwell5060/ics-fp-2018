@@ -101,4 +101,19 @@ cases = [ Case { description = "empty strands"
                , strand2     = "AGTG"
                , expected    = Nothing
                }
+        , Case { description = "custom test with laaaarge strings"
+               , strand1     = "AGTTGATAGAGTATGGATA"
+               , strand2     = "TAGGATGATAAGAATGGAA"
+               , expected    = Just 14
+               }
+        , Case { description = "custom test with empty string first"
+               , strand1     = ""
+               , strand2     = "TA"
+               , expected    = Nothing
+               }
+        , Case { description = "custom test with empty string second"
+               , strand1     = "ATT"
+               , strand2     = ""
+               , expected    = Nothing
+               }
         ]
