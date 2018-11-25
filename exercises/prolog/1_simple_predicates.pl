@@ -15,3 +15,68 @@
 	?- cousin(X,Y).
 	?- grandson(X,Y).
 	?- descendent(X,Y).
+
+
+brother(T, P):- father(Z, T), father(Z, P), T\=P. 
+?- brother(X,Y).
+	X = b,
+	Y = c ;
+	X = c,
+	Y = b ;
+	X = d,
+	Y = e ;
+	X = e,
+	Y = d ;
+
+cousin(T, P):-father(Z1, T), father(Z2, P), brother(Z1, Z2).
+?- cousin(X,Y).
+X = d,
+Y = f ;
+X = e,
+Y = f ;
+X = f,
+Y = d ;
+X = f,
+Y = e ;
+
+grandson(T, P) :- father(P, F), father(F, T).
+?- grandson(X,Y).
+X = d,
+Y = a ;
+X = e,
+Y = a ;
+X = f,
+Y = a ;
+
+descendent(T, P):- father(P, T).
+descendant(T, P):- father(P, Z), descendant(T, Z).
+
+descendent(D, T):- father(T, D).
+descendent(D, T):- father(T, Z), descendent(D, Z).
+?- descendent(X,Y).
+X = b,
+Y = a ;
+X = c,
+Y = a ;
+X = d,
+Y = b ;
+X = e,
+Y = b ;
+X = f,
+Y = c ;
+X = d,
+Y = a ;
+X = e,
+Y = a ;
+X = f,
+Y = a ;
+
+
+
+
+
+
+
+
+
+
