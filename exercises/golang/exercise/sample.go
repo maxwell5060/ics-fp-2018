@@ -5,7 +5,7 @@ import (
 	"math/cmplx"
 	"sync"
 
-	"drawer"
+	"github.com/dikderoy/imagen/drawer"
 )
 
 // Mandelbrot contains information for performing Mandelbrot calculations
