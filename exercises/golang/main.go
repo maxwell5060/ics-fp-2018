@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/dikderoy/imagen/drawer"
-	"github.com/dikderoy/imagen/exercise"
-	log "github.com/sirupsen/logrus"
+	"drawer"
+	"exercise"
+	log "logrus-master"
 	"os"
 )
 
