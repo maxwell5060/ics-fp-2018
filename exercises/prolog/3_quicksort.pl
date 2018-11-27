@@ -2,18 +2,18 @@
 
 Используем разбиение Ломуто, вытаскиваем сублисты без элемента pivot, рекурсивно вычисляя qsort записываем pivot между вычисляемыми сублистами.
 
-leftArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD =< PIVOT, leftArray(PIVOT,TAIL,INRESULT), append([HEAD],INRESULT,RESULT).
-leftArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD > PIVOT, leftArray(PIVOT,TAIL,INRESULT), append([],INRESULT,RESULT).
-leftArray(PIVOT,[HEAD|TAIL],[]) :- length(TAIL,L), L == 0.
+leftArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD =< PIVOT, leftArray(PIVOT,TAIL,INRESULT), append([HEAD],INRESULT,RESULT),!.
+leftArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD > PIVOT, leftArray(PIVOT,TAIL,INRESULT), append([],INRESULT,RESULT),!.
+leftArray(PIVOT,[HEAD|TAIL],[]) :- length(TAIL,L), L == 0,!.
 
-rightArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD > PIVOT, rightArray(PIVOT,TAIL,INRESULT), append([HEAD],INRESULT,RESULT).
-rightArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD =< PIVOT, rightArray(PIVOT,TAIL,INRESULT), append([],INRESULT,RESULT).
-rightArray(PIVOT,[HEAD|TAIL],[]) :- length(TAIL,L), L == 0.
+rightArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD > PIVOT, rightArray(PIVOT,TAIL,INRESULT), append([HEAD],INRESULT,RESULT),!.
+rightArray(PIVOT,[HEAD|TAIL],RESULT):- length(TAIL,L), L > 0, HEAD =< PIVOT, rightArray(PIVOT,TAIL,INRESULT), append([],INRESULT,RESULT),!.
+rightArray(PIVOT,[HEAD|TAIL],[]) :- length(TAIL,L), L == 0,!.
 
-qsort(ARRAY,ARRAY) :- length(ARRAY,1).
+qsort(ARRAY,ARRAY) :- length(ARRAY,1),!.
 qsort([],[]).
 
-qsort(ARRAY,RESULT) :- last(ARRAY,PIVOT), leftArray(PIVOT,ARRAY,LEFTARRAY), rightArray(PIVOT,ARRAY,RIGHTARRAY), qsort(LEFTARRAY,LEFTRESULT), qsort(RIGHTARRAY,RIGHTRESULT), append(LEFTRESULT,[PIVOT],PROMRESULT), append(PROMRESULT,RIGHTRESULT,RESULT).
+qsort(ARRAY,RESULT) :- last(ARRAY,PIVOT), leftArray(PIVOT,ARRAY,LEFTARRAY), rightArray(PIVOT,ARRAY,RIGHTARRAY), qsort(LEFTARRAY,LEFTRESULT), qsort(RIGHTARRAY,RIGHTRESULT), append(LEFTRESULT,[PIVOT],PROMRESULT), append(PROMRESULT,RIGHTRESULT,RESULT),!.
 
 ?- qsort([2,1,2],R).
 R = [1, 2, 2] .
