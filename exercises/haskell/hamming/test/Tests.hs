@@ -31,6 +31,11 @@ cases = [ Case { description = "empty strands"
                , strand2     = ""
                , expected    = Just 0
                }
+        , Case { description = "one strand is empty"
+               , strand1     = "CTG"
+               , strand2     = ""
+               , expected    = Nothing
+               }
         , Case { description = "identical strands"
                , strand1     = "A"
                , strand2     = "A"
@@ -100,5 +105,10 @@ cases = [ Case { description = "empty strands"
                , strand1     = "ATA"
                , strand2     = "AGTG"
                , expected    = Nothing
+               }
+        , Case { description = "long and equal strands"
+               , strand1     = "GGACGGATTCTG"
+               , strand2     = "GGACGGATTCTG"
+               , expected    = Just 0
                }
         ]
