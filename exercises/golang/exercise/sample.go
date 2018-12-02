@@ -1,7 +1,7 @@
 package exercise
 
 import (
-	"github.com/dikderoy/imagen/drawer"
+	"../drawer"
 	"image/color"
 	"errors"
 	"math/cmplx"

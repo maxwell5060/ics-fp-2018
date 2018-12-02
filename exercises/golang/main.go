@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/dikderoy/imagen/drawer"
-	"github.com/dikderoy/imagen/exercise"
+	"./drawer"
+	"./exercise"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
