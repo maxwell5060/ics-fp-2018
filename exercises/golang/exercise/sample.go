@@ -18,47 +18,43 @@ type Mandelbrot struct{
 
 func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 
-	if (mandelbrot.iterations <= 0) {
+	if mandelbrot.iterations <= 0 {
 		return errors.New("Incorrect params")
 	}
 
-	limit := float32(4)
-	halfWidth := canvas.Width / 2
+	limit := float64(4)
+	for y := 0; y < canvas.Height; y++ {
 
-	halfHeight := canvas.Height / 2
+		ay := (mandelbrot.scaleFactor * float32(y)) - mandelbrot.offsetY
 
-	for y := -halfHeight; y <= halfHeight; y++ {
-		ay := mandelbrot.offsetY + (float32(y) * mandelbrot.scaleFactor)
+		for x := 0; x < canvas.Width; x++ {
 
-		for x := -halfWidth; x < halfWidth; x++ {
-			ax := mandelbrot.offsetX + (float32(x) * mandelbrot.scaleFactor)
-			a1 := ax
-			b1 := ay
+			ax := (mandelbrot.scaleFactor * float32(x)) - mandelbrot.offsetX
+			a := float32(ax)
+			b := float32(ay)
 			numIterations := 0
-			for ; numIterations < mandelbrot.iterations; {
-				numIterations++
-				a2 := (a1 * a1) - (b1 * b1) + ax
-				b2 := (2 * a1 * b1) + ay
-				if (a2*a2)+(b2*b2) > limit {
+
+			for numIterations < mandelbrot.iterations {
+
+				aTemp := a*a - b*b + ax
+				bTemp := 2*a*b + ay
+				a = aTemp
+				b = bTemp
+
+				if math.Abs(float64(aTemp)) > limit && math.Abs(float64(bTemp)) > limit {
 					break
 				}
+
 				numIterations++
-				a1 = (a2 * a2) - (b2 * b2) + ax
-				b1 = (2 * a2 * b2) + ay
-				if (a1*a1)+(b1*b1) > limit {
-					break
-				}
+
 			}
 			if numIterations < mandelbrot.iterations {
-
 				index := numIterations % 512
 				wave := 380.0 + (index * 400.0 / 512)
-
-				canvas.Set(x+halfWidth, y+halfHeight, getColor(float64(wave)))
-
+				canvas.Set(x, y, getColor(float64(wave)))
 			} else {
-				n := byte(a1 * b1)
-				canvas.Set(x+halfWidth, y+halfHeight, color.RGBA{n, n, n, 255})
+				n := byte(ax * ay)
+				canvas.Set(x, y, color.RGBA{n, n, n, 255})
 			}
 		}
 	}
@@ -67,103 +63,50 @@ func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 }
 
 func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
-	if (mandelbrot.iterations <= 0) {
+	if mandelbrot.iterations <= 0 {
 		return errors.New("Incorrect params")
 	}
 
-	limit := float32(4)
-	halfWidth := canvas.Width / 2
-	halfHeight := canvas.Height / 2
+	limit := float64(4)
+	wg := sync.WaitGroup{}
 
-	workers := 3
-	var wg sync.WaitGroup
+	for y := 0; y < canvas.Height; y++ {
 
-	for y := -halfHeight; y <= halfHeight; y++ {
-		ay := mandelbrot.offsetY + (float32(y) * mandelbrot.scaleFactor)
+		ay := (mandelbrot.scaleFactor * float32(y)) - mandelbrot.offsetY
 
-		for x := -halfWidth; x < halfWidth; x++ {
-			ax := mandelbrot.offsetX + (float32(x) * mandelbrot.scaleFactor)
-			a1 := ax
-			b1 := ay
+		for x := 0; x < canvas.Width; x++ {
+			ax := (mandelbrot.scaleFactor * float32(x)) - mandelbrot.offsetX
+			a := float32(ax)
+			b := float32(ay)
 			numIterations := 0
-			for ; numIterations < mandelbrot.iterations; {
-				wg.Add(workers)
 
-				c1 := make(chan int, 1)
-				go func() {
-					numIterations++
-					c1 <- numIterations
-					wg.Done()
-				}()
-				numIterations = <- c1
-				close(c1)
+			for numIterations < mandelbrot.iterations {
 
-				c2 := make(chan float32, 1)
-				go func() {
-					c2 <- (a1 * a1) - (b1 * b1) + ax
-					wg.Done()
-				}()
-				a2 := <-c2
-				close(c2)
+				aTemp := a*a - b*b + ax
+				bTemp := 2*a*b + ay
+				a = aTemp
+				b = bTemp
 
-
-				c3 := make(chan float32, 1)
-				go func() {
-					c3 <- (2 * a1 * b1) + ay
-					wg.Done()
-				}()
-				b2 := <-c3
-				close(c3)
-
-				wg.Wait()
-
-				if (a2*a2)+(b2*b2) > limit {
+				if math.Abs(float64(aTemp)) > limit && math.Abs(float64(bTemp)) > limit {
 					break
 				}
 
-				wg.Add(workers)
+				numIterations++
 
-				c4 := make(chan int, 1)
-				go func() {
-					numIterations++
-					c4 <- numIterations
-					wg.Done()
-				}()
-				numIterations = <- c4
-				close(c4)
+			}
+			wg.Add(1)
+			go func(x, y int, ax, ay float32) {
+				if numIterations < mandelbrot.iterations {
+					index := numIterations % 512
+					wave := 380.0 + (index * 400.0 / 512)
 
-				c5 := make(chan float32, 1)
-				go func() {
-					c5 <- (a2 * a2) - (b2 * b2) + ax
-					wg.Done()
-				}()
-				a1 = <- c5
-				close(c5)
-
-				c6 := make(chan float32, 1)
-				go func() {
-					c6 <- (2 * a2 * b2) + ay
-					wg.Done()
-				}()
-				b1 = <- c6
-				close(c6)
-
-				wg.Wait()
-
-				if (a1*a1)+(b1*b1) > limit {
-					break
+					canvas.Set(x, y, getColor(float64(wave)))
+				} else {
+					n := byte(ax * ay)
+					canvas.Set(x, y, color.RGBA{n, n, n, 255})
 				}
-			}
-			if numIterations < mandelbrot.iterations {
-				index := numIterations % 512
-				wave := 380.0 + (index * 400.0 / 512)
-
-				canvas.Set(x+halfWidth, y+halfHeight, getColor(float64(wave)))
-			} else {
-				n := byte(a1 * b1)
-				canvas.Set(x+halfWidth, y+halfHeight, color.RGBA{n, n, n, 255})
-			}
-
+				wg.Done()
+			} (x, y, ax, ay)
 		}
 	}
 
