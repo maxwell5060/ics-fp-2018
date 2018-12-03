@@ -21,7 +21,8 @@ qsort(ARRAY,RESULT) :- last(ARRAY,PIVOT), leftArray(PIVOT,ARRAY,LEFTARRAY), righ
 
 divide(LIST,L,R,N):- length(LIST,LEN), I is (LEN - 1) div 2, div(LIST,L,R,N,I),!.
 divide([H|T],L,R,N):- T==[], L =[], R=[], N=H,!.
-divide([H|[T|TT]],L,R,N):- TT==[], L =[], R=[H], N=T,!.
+divide([H|[T|TT]],L,R,N):- TT==[], L =[], R=[T], N=H,!.
+divide([H|[T|[TT|TTT]]],L,R,N):- TTT==[], L =[H], R=[TT], N=T,!.
 div([H|[T|TT]],L,R,N,1):- L = [H], R = TT, N = T,!.
 div([H|T],L,R,N,I):- I\=0, II is I - 1, append([H],ARR,L), div(T,ARR,R,N,II),!.
 
@@ -40,3 +41,6 @@ T = instant(2, empty, instant(1, empty, empty)) .
 
 ?- balanced_tree([5,3,6,2,1,7,4],T).
 T = instant(4, instant(2, instant(1, empty, empty), instant(3, empty, empty)), instant(6, instant(5, empty, empty), instant(7, empty, empty))) .
+
+?- balanced_tree([1,9,2,8,3,7,4,6,5],T).
+T = instant(5, instant(2, instant(1, empty, empty), instant(3, empty, instant(4, empty, empty))), instant(7, instant(6, empty, empty), instant(8, empty, instant(9, empty, empty)))) 
