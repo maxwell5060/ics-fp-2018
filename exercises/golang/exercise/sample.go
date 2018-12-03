@@ -39,14 +39,11 @@ func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 	var wg sync.WaitGroup
     wg.Add(3)
     for i := 0; i < canvas.Width; i++ {
-        go func(i int) {
-            for j := 0; j < canvas.Height; j++  {
-                mandelbrot.fillPixel(canvas, i, j)
-            }
-            wg.Done()
-        }(i)
+        for j := 0; j < canvas.Height; j++  {
+            wg.Add(1)
+            mandelbrot.fillPixel(canvas, i, j)
+        }
     }
-    wg.Wait()
 
 	return nil
 }
