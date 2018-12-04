@@ -21,7 +21,7 @@ func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 	if mandelbrot.iterations <= 0 {
 		return errors.New("Incorrect params")
 	}
-	
+
 	limit := float64(4)
 	for y := 0; y < canvas.Height; y++ {
 
@@ -74,9 +74,9 @@ func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 
 
 	for y := 0; y < canvas.Height; y++ {
-		
+
 		go func(y int) {
-			
+
 			ay := (mandelbrot.scaleFactor * float32(y)) - mandelbrot.offsetY
 
 			for x := 0; x < canvas.Width; x++ {
@@ -99,19 +99,15 @@ func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 					numIterations++
 
 				}
-				wg.Add(1)
-				go func(x, y, numIterations int, ax, ay float32) {
-					if numIterations < mandelbrot.iterations {
-						index := numIterations % 512
-						wave := 380.0 + (index * 400.0 / 512)
+				if numIterations < mandelbrot.iterations {
+					index := numIterations % 512
+					wave := 380.0 + (index * 400.0 / 512)
 
-						canvas.Set(x, y, getColor(float64(wave)))
-					} else {
-						n := byte(ax * ay)
-						canvas.Set(x, y, color.RGBA{n, n, n, 255})
-					}
-					wg.Done()
-				}(x, y, numIterations, ax, ay)
+					canvas.Set(x, y, getColor(float64(wave)))
+				} else {
+					n := byte(ax * ay)
+					canvas.Set(x, y, color.RGBA{n, n, n, 255})
+				}
 			}
 			wg.Done()
 		}(y)
