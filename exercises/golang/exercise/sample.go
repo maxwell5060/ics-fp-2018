@@ -18,7 +18,7 @@ type Mandelbrot struct{
 
 func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 
-	if mandelbrot.iterations <= 0 {
+	if mandelbrot.iterations <= 0 || canvas.Height <= 0 || canvas.Width <= 0 {
 		return errors.New("Incorrect params")
 	}
 
@@ -63,7 +63,7 @@ func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 }
 
 func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
-	if mandelbrot.iterations <= 0 {
+	if mandelbrot.iterations <= 0 || canvas.Height <= 0 || canvas.Width <= 0 {
 		return errors.New("Incorrect params")
 	}
 
