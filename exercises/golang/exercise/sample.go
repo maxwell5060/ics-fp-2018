@@ -21,7 +21,7 @@ func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
 	if mandelbrot.iterations <= 0 {
 		return errors.New("Incorrect params")
 	}
-
+	
 	limit := float64(4)
 	for y := 0; y < canvas.Height; y++ {
 
@@ -68,47 +68,56 @@ func (mandelbrot Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 	}
 
 	limit := float64(4)
-	wg := sync.WaitGroup{}
+
+	var wg sync.WaitGroup
+	wg.Add(canvas.Height)
+
 
 	for y := 0; y < canvas.Height; y++ {
+		
+		go func(y int) {
+			
+			ay := (mandelbrot.scaleFactor * float32(y)) - mandelbrot.offsetY
 
-		ay := (mandelbrot.scaleFactor * float32(y)) - mandelbrot.offsetY
+			for x := 0; x < canvas.Width; x++ {
+				ax := (mandelbrot.scaleFactor * float32(x)) - mandelbrot.offsetX
+				a := float32(ax)
+				b := float32(ay)
+				numIterations := 0
 
-		for x := 0; x < canvas.Width; x++ {
-			ax := (mandelbrot.scaleFactor * float32(x)) - mandelbrot.offsetX
-			a := float32(ax)
-			b := float32(ay)
-			numIterations := 0
+				for numIterations < mandelbrot.iterations {
 
-			for numIterations < mandelbrot.iterations {
+					aTemp := a*a - b*b + ax
+					bTemp := 2*a*b + ay
+					a = aTemp
+					b = bTemp
 
-				aTemp := a*a - b*b + ax
-				bTemp := 2*a*b + ay
-				a = aTemp
-				b = bTemp
+					if math.Abs(float64(aTemp)) > limit && math.Abs(float64(bTemp)) > limit {
+						break
+					}
 
-				if math.Abs(float64(aTemp)) > limit && math.Abs(float64(bTemp)) > limit {
-					break
+					numIterations++
+
 				}
+				wg.Add(1)
+				go func(x, y, numIterations int, ax, ay float32) {
+					if numIterations < mandelbrot.iterations {
+						index := numIterations % 512
+						wave := 380.0 + (index * 400.0 / 512)
 
-				numIterations++
-
+						canvas.Set(x, y, getColor(float64(wave)))
+					} else {
+						n := byte(ax * ay)
+						canvas.Set(x, y, color.RGBA{n, n, n, 255})
+					}
+					wg.Done()
+				}(x, y, numIterations, ax, ay)
 			}
-			wg.Add(1)
-			go func(x, y int, ax, ay float32) {
-				if numIterations < mandelbrot.iterations {
-					index := numIterations % 512
-					wave := 380.0 + (index * 400.0 / 512)
-
-					canvas.Set(x, y, getColor(float64(wave)))
-				} else {
-					n := byte(ax * ay)
-					canvas.Set(x, y, color.RGBA{n, n, n, 255})
-				}
-				wg.Done()
-			} (x, y, ax, ay)
-		}
+			wg.Done()
+		}(y)
 	}
+
+	wg.Wait()
 
 	return nil
 }
@@ -154,3 +163,4 @@ func getColor(wave float64) color.RGBA {
 	blue = math.Pow(blue*s, 0.8) * 255;
 	return color.RGBA{uint8(red), uint8(green), uint8(blue), 255};
 }
+
