@@ -101,4 +101,20 @@ cases = [ Case { description = "empty strands"
                , strand2     = "AGTG"
                , expected    = Nothing
                }
+		, Case { description = "disallow second strand longer"
+               , strand1     = "AAAAAAAAAAAAAAAAAAAA"
+               , strand2     = "AGAGAGAGAGAGAGAGAGAG"
+               , expected    = Just 10
+               }
+		, Case { description = "disallow second strand longer"
+               , strand1     = "GAGAGAGAGAGAGAGAGAGA"
+               , strand2     = "AGAGAGAGAGAGAGAGAGAG"
+               , expected    = Just 20
+               }
+		, Case { description = "disallow second strand longer"
+               , strand1     = "ITSTIMETOGOSLEEP"
+               , strand2     = "FPISVERYHARDWORK"
+               , expected    = Just 16
+
+               }   
         ]
