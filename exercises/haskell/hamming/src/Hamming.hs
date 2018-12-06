@@ -1,12 +1,4 @@
-module Hamming (distance, count) where
-
-count :: String -> String -> Int
-count [] [] = 0
-count (xh:xt) (yh:yt) = 
-  if xh /= yh
-    then (count xt yt) + 1
-  else
-    count xt yt
+module Hamming (distance) where
 
 distance :: String -> String -> Maybe Int
 distance xs ys = 
@@ -14,3 +6,11 @@ distance xs ys =
     then Nothing
   else 
     Just (count xs ys)
+    where
+    count :: String -> String -> Int
+    count [] [] = 0
+    count (xh:xt) (yh:yt) = 
+      if xh /= yh
+        then (count xt yt) + 1
+      else
+        count xt yt
