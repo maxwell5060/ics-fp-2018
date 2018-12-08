@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"image/color"
 	"math/rand"
+	"math"
 	"time"
 	"sync"
 )
@@ -25,19 +26,19 @@ func (mbro MandelbrotGen) CalCol(ix,iy float32, cbase float32) color.Color {
 	y := float32(0)
 	
 	var r,b,g uint8
+	var mod float64
 	
 	for i := 0; i < mbro.iterations; i++ {
 		x, y = x*x - y*y + ix, 2 * x * y + iy
 		
-		if x*x + y*y > 4 {
-			return color.Black
+		if float64(x*x + y*y) > math.Sqrt(float64(x)) * 4 {
+			mod = float64(i) * rand.Float64()
+			r,g,b = uint8(mod * mod), uint8(mod), uint8(math.Exp(mod))
+			return color.RGBA{r,g,b,255}
 		}
 	}
 	
-	mod := x * x + y * y
-	r,g,b = uint8(cbase * mod * 2), uint8(cbase * mod * 5), uint8(cbase * mod * 10)
-	
-	return color.RGBA{r,g,b,255}
+	return color.White
 }
 
 func (mbro MandelbrotGen) Generate(canvas *drawer.Image) error {
@@ -45,7 +46,7 @@ func (mbro MandelbrotGen) Generate(canvas *drawer.Image) error {
 	rmin, rmax := 15, 250
 	rset := rmin + rand.Intn(rmax+1)
 	
-	roff := rand.Float32()
+	roff := float32(0.5)//rand.Float32()
 	log.WithField("roffset", roff).Info("randomly generated offset factor")
 	roffx := roff * mbro.offsetX
 	roffy := roff * mbro.offsetY
