@@ -52,18 +52,18 @@ func DefineConfig() {
 }
 
 func DefineCommandLineConfig() {
-	flag.IntP("width", "w", 500, "width of an image")
+	flag.IntP("width", "w", 5000, "width of an image")
 	viper.BindPFlag("Image.Resolution", flag.Lookup("width"))
 
 	flag.IntP("iterations", "i", 50,
 		"iterations to check if P is escaping to infinity")
 	viper.BindPFlag("Algorithm.Iterations", flag.Lookup("iterations"))
 
-	flag.Float32P("scale", "s", 0,
+	flag.Float32P("scale", "s", 0.002,
 		"scale factor to use for projecting pixels onto complex value plane")
 	viper.BindPFlag("Algorithm.ScaleFactor", flag.Lookup("scale"))
 
-	flag.BoolP("parallel", "p", false, "use parallel computations")
+	flag.BoolP("parallel", "p", true, "use parallel computations")
 	viper.BindPFlag("Algorithm.Parallel", flag.Lookup("parallel"))
 
 	flag.Float32P("offset.x", "x", 2.5,
