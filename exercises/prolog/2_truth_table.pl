@@ -10,3 +10,20 @@
 % true fail true
 % fail true fail
 % fail fail fail
+or(A,B):- A;B.
+not(A):- \+A.
+and(A,B):- not(or(not(A),not(B))).
+xor(A, B):- or(and(not(A), B), and(A, not(B))).
+equ(A,B):- or(and(A, B), and(not(A), not(B))).
+
+bool(true).
+bool(false).
+
+% Отсечение избавляет от "лишних" решений
+mapping(Expr, true) :- Expr, !.
+mapping(_, false).
+
+make_row(A, B, Expr, Result) :- bool(A), bool(B), mapping(Expr, Result).
+
+truth_table(A, B, Expr) :- forall(make_row(A, B, Expr, Result), format("~w\t~w\t~w~n", [A, B, Result])).
+truth_table(A, Expr) :- truth_table(A, true, Expr).

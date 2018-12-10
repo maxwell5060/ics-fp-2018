@@ -1,0 +1,6 @@
+?- truth_table(A, B, and(A, or(A,B))).
+true    true    true
+true    false   true
+false   true    false
+false   false   false
+true.
