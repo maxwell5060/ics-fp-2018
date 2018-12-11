@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/dikderoy/imagen/drawer"
 	"github.com/dikderoy/imagen/exercise"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 	log.WithField("height", y).Info("calculated height of image")
 	i := drawer.NewImage(drawer.GlobalConfig.Image.Resolution, y)
 	log.WithField("scale-factor", drawer.GlobalConfig.Algorithm.ScaleFactor).Debug("chosen factor")
-	m := exercise.NewMandelbrot(
+	m := exercise.New(
 		drawer.GlobalConfig.Algorithm.Iterations,
 		drawer.GlobalConfig.Algorithm.ScaleFactor,
 		drawer.GlobalConfig.Image.Offset.X,
