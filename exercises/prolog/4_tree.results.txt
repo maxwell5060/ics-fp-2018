@@ -1,0 +1,2 @@
+?- balanced_tree([1, 2, 3], X).
+X = instant(2, instant(3, empty, empty), instant(1, empty, empty)).
