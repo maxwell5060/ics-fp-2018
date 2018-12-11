@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/dikderoy/imagen/drawer"
 	"github.com/dikderoy/imagen/exercise"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {
