@@ -52,7 +52,7 @@ func DefineConfig() {
 }
 
 func DefineCommandLineConfig() {
-	flag.IntP("width", "w", 500, "width of an image")
+	flag.IntP("width", "w", 10000, "width of an image")
 	viper.BindPFlag("Image.Resolution", flag.Lookup("width"))
 
 	flag.IntP("iterations", "i", 50,
