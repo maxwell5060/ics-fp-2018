@@ -22,8 +22,7 @@ func (mandelbrot Mandelbrot) Generate(canvas *drawer.Image) error {
   limit := float32(4)
   halfWidth := canvas.Width / 2
   halfHeight := canvas.Height / 2
-
-  for y := -halfHeight; y <= halfHeight; y++ {
+  for y := -halfHeight; y < halfHeight; y++ {
 
     Yn := mandelbrot.offsetY + (float32(y) * mandelbrot.scaleFactor)
 
@@ -63,7 +62,7 @@ func (mandelbrot Mandelbrot) GenerateParallel(canvas * drawer.Image) error {
   halfHeight := canvas.Height / 2
   halfWidth := canvas.Width / 2
   channel := make(chan Point, canvas.Width * canvas.Height)
-  for y := -halfHeight; y <= halfHeight; y++ {
+  for y := -halfHeight; y < halfHeight; y++ {
 	go drawSetsForY(y,mandelbrot,canvas, channel)
   }
   for i := 0 ; i < canvas.Width * canvas.Height; i++ {
