@@ -19,33 +19,35 @@ func NewMandelbrot(iterations int, scaleFactor float32, offsetX, offsetY float32
 }
 
 func (m Mandelbrot) Generate(canvas *drawer.Image) error {
-	const left, bottom, right, up = -2, -2, 2, 2
+	const (
+		left, bottom = -2, -2
+	)
 
-	for dy := 0; dy < canvas.Height; dy++ {
-		y := bottom + float64(dy)/float64(canvas.Height)*(up-bottom)
-
-		for dx := 0; dx < canvas.Width; dx++ {
-			x := left + float64(dx)/float64(canvas.Width)*(right-left)
-			canvas.Set(dx, dy, m.getColor(complex(x, y)))
+	for y := 0; y < canvas.Height; y++ {
+		dy := left + float32(y)*m.scaleFactor
+		for x := 0; x < canvas.Width; x++ {
+			dx := bottom + float32(x)*m.scaleFactor
+			canvas.Set(x, y, m.getColor(complex(float64(dx), float64(dy))))
 		}
 	}
-
 	return nil
 }
 
 func (m Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 	waitGroup := sync.WaitGroup{}
-	const left, bottom, right, up = -2, -2, 2, 2
-	for dy := 0; dy < canvas.Height; dy++ {
-		y := bottom + float64(dy)/float64(canvas.Height)*(up-bottom)
+	const (
+		left, bottom = -2, -2
+	)
 
-		for dx := 0; dx < canvas.Width; dx++ {
-			x := left + float64(dx)/float64(canvas.Width)*(right-left)
+	for y := 0; y < canvas.Height; y++ {
+		dy := left + float32(y)*m.scaleFactor
+		for x := 0; x < canvas.Width; x++ {
+			dx := bottom + float32(x)*m.scaleFactor
 			waitGroup.Add(1)
 			go func(px, py int) {
-				canvas.Set(px, py, m.getColor(complex(x, y)))
+				canvas.Set(px, py, m.getColor(complex(float64(dx), float64(dy))))
 				waitGroup.Done()
-			}(dx, dy)
+			}(x, y)
 		}
 	}
 	return nil
@@ -53,12 +55,17 @@ func (m Mandelbrot) GenerateParallel(canvas *drawer.Image) error {
 
 func (m Mandelbrot) getColor(z complex128) color.Color {
 	var v complex128
-	var i = 0
-	for ; i < m.iterations && cmplx.Abs(v) <= 2; i++ {
+	for n := uint8(0); n < uint8(m.iterations); n++ {
 		v = v*v + z
+		if cmplx.Abs(v) > 2 {
+			switch {
+			case n > 50:
+				return color.RGBA{100, 0, 0, 255}
+			default:
+				logScale := math.Log(float64(n)) / math.Log(float64(m.iterations))
+				return color.RGBA{0, 0, 255 - uint8(logScale*255), 255}
+			}
+		}
 	}
-	if cmplx.Abs(v) <= 2 {
-		return color.Black
-	}
-	return color.YCbCr{Y: 255 - 15*uint8(i), Cb: 15 * uint8(i), Cr: 255 - 15*uint8(i)}
+	return color.Black
 }
