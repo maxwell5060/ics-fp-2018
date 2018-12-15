@@ -101,4 +101,14 @@ cases = [ Case { description = "empty strands"
                , strand2     = "AGTG"
                , expected    = Nothing
                }
+        , Case { description = "checking for empty 1st"
+               , strand1     = ""
+               , strand2     = "AGTG"
+               , expected    = Nothing
+               }
+        , Case { description = "checking for empty 2nd"
+               , strand1     = "ATA"
+               , strand2     = ""
+               , expected    = Nothing
+               }
         ]
