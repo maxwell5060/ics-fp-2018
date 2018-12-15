@@ -6,14 +6,30 @@
 %% elements larger than the pivot.
 %% The sorted list is [Left, pivot, Right].
 
-%% splitBy( H, U, Lefts, Rights )
+%% split( H, U, Lefts, Rights )
 %% True if Lefts = { L in U | L <= H }; Rights = { R in U | R > H }
+
+%% H is a pivot here
+
 split(_, [], [], []).
-split(H, [U|T], [U|Lefts], Rights) :- U =< H, split(H, T, Lefts, Rights).
-split(H, [U|T], Lefts, [U|Rights]) :- U  > H, split(H, T, Lefts, Rights).
+
+%% If Uh is not less than H, then it goes to Lefts
+split(H, [Uh|T], [Uh|Lefts], Rights) :-
+    Uh =< H,
+    split(H, T, Lefts, Rights).
+
+%% If Uh is larger than H, then it goes to Rights
+split(H, [Uh|T], Lefts, [Uh|Rights]) :-
+    Uh > H,
+    split(H, T, Lefts, Rights).
 
 qsort([], []).
-qsort([H|U], Res) :- split(H, U, L, R), qsort(L, SL), qsort(R, SR), append(SL, [H|SR], Res).
- 
+qsort([H|U], Res) :-
+    split(H, U, L, R), %% split U into Lefts (L) and Rigths (R)
+    qsort(L, SL), %% Sort these parts separatelly, with qsort
+    qsort(R, SR),
+    append(SL, [H|SR], Res), %% Join the sorted parts
+    !. %% Cut the execution since we do not need to find another sort
+    
 %% ?- qsort([1, 4, 3, 1, 2], L).
-%% L = [1, 1, 2, 3, 4] .
+%% L = [1, 1, 2, 3, 4].
