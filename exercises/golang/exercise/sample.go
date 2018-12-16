@@ -2,7 +2,6 @@ package exercise
 
 import (
 	"github.com/dikderoy/imagen/drawer"
-	log "github.com/sirupsen/logrus"
 	"image/color"
 	"math/cmplx"
 	"sync"
@@ -18,21 +17,18 @@ func NewMandelbrot(iterations int, scaleFactor float32, offsetX, offsetY float32
 	return Mandelbrot{iterations: iterations, scaleFactor: scaleFactor, offsetX: offsetX, offsetY: offsetY}
 }
 
-func (m Mandelbrot) GetColor(xy complex128) color.Color {
-    f := xy
-    for i := 0; i < mandelbrot.iterations && cmplx.Abs(f) <= 2; i++ {
-        f = cmplx.Pow(f, 2) + xy
-    }
-    if cmplx.Abs(f) > 2 {
-        return color.YCbCr{Y: 255 - 15*uint8(i), Cb: 15 * uint8(i), Cr: 255 - 15*uint8(i)}
-    }
-    return color.Black
+func (m Mandelbrot) GetColor(xy complex128) color.Color { 
+var f complex128 
+for i := 0; i < m.iterations && cmplx.Abs(f) <= 2; i++ { 
+f = cmplx.Pow(f, 5) + xy 
+} 
+if cmplx.Abs(f) <= 4 { 
+return color.RGBA{255, 0, 0, 255} 
+} 
+return color.White 
 }
 
 func (m Mandelbrot) Generate(canvas *drawer.Image) error {
-	if (mandelbrot.iterations <= 0) {
-		return errors.New("Sry, incorrect params")
-	}
 	
 	for dy := 0; dy < canvas.Height; dy++ {
 		for dx := 0; dx < canvas.Width; dx++ {
@@ -44,10 +40,7 @@ func (m Mandelbrot) Generate(canvas *drawer.Image) error {
 	return nil 
 }
 func (m Mandelbrot) GenerateParallel(canvas *drawer.Image) error { 
-	if (mandelbrot.iterations <= 0) {
-		return errors.New("Sry, incorrect params")
-	}
-	
+
 	wg := sync.WaitGroup{}
 	for dy := 0; dy < canvas.Height; dy++ {
 		for dx := 0; dx < canvas.Width; dx++ {
