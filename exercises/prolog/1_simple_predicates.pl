@@ -15,6 +15,27 @@
 	% ?- cousin(X,Y).
 	% ?- grandson(X,Y).
 	% ?- descendent(X,Y).
+
+% Result:
+% ? - brother(c,b).
+% true.
+% ? - brother(c,b).
+% true.
+% ? - brother(c,b).
+% true.
+% ? - brother(c,b).
+% true.
+% ? - brother(f,e).
+% false.
+% ?- cousin(f, d).
+% true.
+% ?- grandson(e, a).
+% false.
+% ?- grandson(d, a).
+% true.
+% ?- descendent(i, a).
+% true .
+
 father(a,b).  % 1
 father(a,c).  % 2
 father(b,d).  % 3
