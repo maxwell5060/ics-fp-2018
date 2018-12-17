@@ -9,11 +9,6 @@ import (
 
 func main() {
 	drawer.Init()
-
-	if drawer.GlobalConfig.Algorithm.ScaleFactor == 0 {
-		drawer.GlobalConfig.Algorithm.ScaleFactor = drawer.AutoFitScaleFactor(drawer.GlobalConfig.Image.Resolution)
-	}
-
 	log.Info("starting, trying to open file")
 	f, err := os.OpenFile("mandelbrot-sample.png", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
@@ -22,15 +17,16 @@ func main() {
 	defer f.Close()
 
 	log.Info("starting calculations")
-	y := int(float32(drawer.GlobalConfig.Image.Resolution) / 1.75)
-	log.WithField("height", y).Info("calculated height of image")
-	i := drawer.NewImage(drawer.GlobalConfig.Image.Resolution, y)
+	i := drawer.NewImage(drawer.GlobalConfig.Image.Resolution, drawer.GlobalConfig.Image.Resolution)
 	log.WithField("scale-factor", drawer.GlobalConfig.Algorithm.ScaleFactor).Debug("chosen factor")
+	log.WithField("resolution", drawer.GlobalConfig.Image.Resolution).Debug("chosen Resolution")
+	log.WithField("offset-x", drawer.GlobalConfig.Image.Offset.X).Debug("chosen Offset X")
+	log.WithField("offset-y", drawer.GlobalConfig.Image.Offset.Y).Debug("chosen Offset Y")
 	m := exercise.NewMandelbrot(
 		drawer.GlobalConfig.Algorithm.Iterations,
-		drawer.GlobalConfig.Algorithm.ScaleFactor,
-		drawer.GlobalConfig.Image.Offset.X,
-		drawer.GlobalConfig.Image.Offset.Y,
+		float64(drawer.GlobalConfig.Algorithm.ScaleFactor),
+		float64(drawer.GlobalConfig.Image.Offset.X),
+		float64(drawer.GlobalConfig.Image.Offset.Y),
 	)
 
 	if drawer.GlobalConfig.Algorithm.Parallel {
